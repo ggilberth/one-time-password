@@ -1,12 +1,14 @@
 const admin = require('firebase-admin')
 const twilio = require('./twilio')
 
+const parsePhone = require('../utils/parsePhone')
+
 module.exports = function(req, res) {
     if (!req.body.phone) {
         return res.status(422).send({error: "You must provide a phone number"})
     }
 
-    const phone = String(req.body.phone).replace(/[^\d]/g, "")
+    const phone = parsePhone(req.body.phone)
 
     admin.auth().getUser(phone).then(userRecord => {
         const code = Math.floor(Math.random() * 8999 + 1000)
