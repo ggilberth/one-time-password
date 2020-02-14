@@ -7,7 +7,7 @@ stages:
 
 cache:
   paths:
-    - ./functions/node_modules/
+    - node_modules
   key: "$CI_BUILD_REPO"
 
 setup:
@@ -22,7 +22,6 @@ setup:
     name: "${CI_JOB_STAGE}_${CI_COMMIT_REF_NAME}"
     paths:
       - node_modules
-      - packages/irati/types/generated
     expire_in: 1 day
 
 test:
