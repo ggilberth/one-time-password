@@ -1,6 +1,8 @@
 image: node:latest
 
 stages:
+  - setup
+  - test
   - deploy
 
 cache:
@@ -8,12 +10,26 @@ cache:
     - ./functions/node_modules/
   key: "$CI_BUILD_REPO"
 
-deploy-prod:
-  stage: deploy
-  only:
-    - master
+setup:
+  stage: setup
   script:
-    - yarn
-    - yarn run build
-    - firebase use one-time-password-b1f2e --token $FIREBASE_TOKEN
-    - firebase deploy --only hosting -m "Pipe $CI_PIPELINE_ID Build $CI_BUILD_ID" --token $FIREBASE_TOKEN
+    - echo "Building _version=$BUNDLE_REF"
+    - npm -v
+    - node -v
+    - echo "Installing dependancies"
+    - npm install --cache-min=99999999 > /dev/null
+  artifacts:
+    name: "${CI_JOB_STAGE}_${CI_COMMIT_REF_NAME}"
+    paths:
+      - node_modules
+      - packages/irati/types/generated
+    expire_in: 1 day
+
+test:
+  stage: test
+  script:
+    - npm run lint
+
+## Hold scripts
+# firebase use one-time-password-b1f2e --token $FIREBASE_TOKEN
+#  firebase deploy --only hosting -m "Pipe $CI_PIPELINE_ID Build $CI_BUILD_ID" --token $FIREBASE_TOKEN
