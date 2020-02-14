@@ -31,6 +31,8 @@ test:
 
 deploy:
   stage: deploy
+  before_script:
+    - npm i -g firebase-tools
   script:
     - echo "Deploying to production"
     - firebase use one-time-password-b1f2e --token $FIREBASE_TOKEN
